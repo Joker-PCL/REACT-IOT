@@ -1,0 +1,13 @@
+@import  "tabulator-tables";
+
+.tabulator-col {
+    background-color: #2196f3 !important;
+    color: #ffffff;
+}
+
+.tabulator-header-filter input {
+    border-radius: 7px;
+    color: #ff0000;
+    text-transform: uppercase;
+}
+

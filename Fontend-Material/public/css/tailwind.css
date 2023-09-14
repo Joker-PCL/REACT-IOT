@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+label {
+    font-size: 14px !important; 
+}
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px auto !important;
+}
+
+.main-detail {
+    width: 650px;
+    justify-content: center;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 0.8fr));
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.form-add-machine {
+    width: 450px;
+    justify-content: center;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 0.8fr));
+    gap: 30px 40px;
+    width: 100%;
+    justify-content: center;
+}

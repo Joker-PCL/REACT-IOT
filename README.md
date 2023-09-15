@@ -1,5 +1,20 @@
 # EXTENSIONS
     - tabnine
+
+# WORK REWRITE APACHE
+    * sudo nano /etc/apache2/apache2.conf
+        <Directory /var/www/>
+            Options Indexes FollowSymLinks
+            AllowOverride All
+            Require all granted
+        </Directory>
+    
+    * sudo service apache2 restart
+    - create .htaccess file in folder html
+        Options -MultiViews
+        RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteRule ^ index.html [QSA,L]
     
 # SSH REMOTE TO SERVER
     - delete key

@@ -21,7 +21,7 @@ export function alert_failed(message) {
     icon: 'error',
     title: message || 'เกิดข้อผิดพลาด!',
     showConfirmButton: false,
-    timer: 1500
+    timer: 2500
   })
 }
 

@@ -15,12 +15,13 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
 import { MaterialTailwindControllerProvider } from "@/context";
-import "../public/css/tailwind.css";
+import "../src/css/tailwind.css";
 import "../src/css/datatables.css";
 import "../src/css/tabulator.css";
+import "../src/css/loading.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  //<React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
         <MaterialTailwindControllerProvider>
@@ -28,5 +29,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </MaterialTailwindControllerProvider>
       </ThemeProvider>
     </BrowserRouter>
-  //</React.StrictMode>
+  </React.StrictMode>
 );

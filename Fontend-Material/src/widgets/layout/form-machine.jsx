@@ -33,7 +33,7 @@ export function FormMachine({ open, setOpen, dataObj }) {
     e.preventDefault();
     // แก้ไขข้อมูลเครื่องจักร
     if (dataObj.machineID) {
-      (async () =>  {
+      (async () => {
         await usePutData(API_URL.URL_UPDATE_MC, formData).then(() => {
           modalOpen();
           alert_success();
@@ -44,13 +44,15 @@ export function FormMachine({ open, setOpen, dataObj }) {
       })();
     } // เพิ่มรายการเครื่องจักร
     else {
-      (async () =>  {
+      (async () => {
         await usePostData(API_URL.URL_CREATE_MC, formData).then(() => {
           modalOpen();
           alert_success();
         }).catch((error) => {
           console.error("Error fetching dataMC:", error);
-          alert_failed();
+          if (error.response.status === 404) {
+            setErrorMsg(error.response.data);
+          }
         });
       })();
     }
@@ -63,18 +65,20 @@ export function FormMachine({ open, setOpen, dataObj }) {
       ...prevData,
       [name]: value,
     }));
+
+    setErrorMsg(false)
   }
 
   return (
     <>
       <Dialog open={open} size="xxl">
         <DialogHeader className="flex justify-center underline text-gray-600">เพิ่ม/แก้ไขรายการเครื่องจักร</DialogHeader>
-        <DialogBody divider className="main-detail h-[80vh] overflow-y-scroll">
-          <form className="mt-8 mb-5" onSubmit={handleSubmit}>
-            <div className="form-add-machine mb-20">
+        <DialogBody divider className="h-[80vh] overflow-y-scroll">
+          <form className="mt-8 mb-20 w-[100%] xl:mx-20" onSubmit={handleSubmit}>
+            <div className="orm-add-machine mb-10 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-2">
               <div>
                 <Input
-                  label="ไอดีเครื่องจักร"
+                  label="ไอดีเครื่องจักร *"
                   id="machineID"
                   name="machineID"
                   defaultValue={dataObj.machineID || ""}
@@ -82,18 +86,19 @@ export function FormMachine({ open, setOpen, dataObj }) {
                   onChange={handleChange}
                   readOnly={!!dataObj.machineID}
                   required
-                  error={dataObj.machineID ? true : false}
+                  success={dataObj.machineID ? true : false}
+                  error={errMsg ? true : false}
                 />
                 <Typography
                   variant="small"
                   color="red"
                   className="mt-2 flex items-center gap-1 font-normal"
                 >
-                  {errMsg && "ไอดีเครื่องจักรนี้มีอยู่แล้ว"}
+                  {errMsg}
                 </Typography>
               </div>
               <Input
-                label="ชื่อเครื่องจักร"
+                label="ชื่อเครื่องจักร *"
                 id="machineName"
                 name="machineName"
                 defaultValue={formData.machineName}
@@ -102,7 +107,16 @@ export function FormMachine({ open, setOpen, dataObj }) {
                 required
               />
               <Input
-                label="Speed เครื่อง"
+                label="ชั่วโมงการทำงาน *"
+                id="workTimeDF"
+                name="workTimeDF"
+                defaultValue={formData.workTimeDF}
+                type="number"
+                onChange={handleChange}
+                required
+              />
+              <Input
+                label="ความเร็วเครื่องโดยเฉลี่ย *"
                 id="speedDF"
                 name="speedDF"
                 defaultValue={formData.speedDF}
@@ -111,7 +125,7 @@ export function FormMachine({ open, setOpen, dataObj }) {
                 required
               />
               <Input
-                label="หน่วยชิ้นงาน"
+                label="หน่วยชิ้นงาน *"
                 id="unit"
                 name="unit"
                 defaultValue={formData.unit}
@@ -178,7 +192,7 @@ export function FormMachine({ open, setOpen, dataObj }) {
               />
             </div>
             <>
-              <Typography className="flex justify-end mb-2 gap-5">
+              <Typography className="flex justify-start mb-2 gap-5">
                 <Button color="blue" className="py-2" type="submit">
                   <span><i className="fa-regular fa-floppy-disk fa-2x" /></span>
                   <span>บันทึก</span>
@@ -189,6 +203,10 @@ export function FormMachine({ open, setOpen, dataObj }) {
                 </Button>
               </Typography>
             </>
+            <br />
+            <br />
+            <br />
+            <br />
           </form>
         </DialogBody>
       </Dialog>

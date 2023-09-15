@@ -222,15 +222,12 @@ router.post("/machineDetail", function (req, res) {
                       ORDER BY PD.id DESC`,
         [req.body.machineID],
         function (err, lists) {
+            console.log(lists);
             if (err) {
                 console.error("Error fetching data:", err);
                 return res.status(500).json({ error: "Error fetching data" });
             } else {
-                if (lists.length > 0) {
-                    res.status(200).json(lists);
-                } else {
-                    return res.status(404).json({ error: "No data found" });
-                }
+                res.status(200).json(lists);
             }
         }
     );

@@ -5,3 +5,4 @@ export * from "@/widgets/layout/footer";
 export * from "@/widgets/layout/navbar";
 export * from "@/widgets/layout/form-machine";
 export * from "@/widgets/layout/form-product";
+export * from "@/widgets/layout/loading";

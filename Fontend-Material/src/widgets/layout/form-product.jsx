@@ -96,9 +96,9 @@ export function FormProduct({ open, setOpen, dataObj }) {
           {isLoading ? (
             <h1>Loading...</h1>
           ) : (
-            <DialogBody divider className="main-detail h-[80vh] overflow-y-scroll">
-              <form className="mt-8 mb-5" onSubmit={handleSubmit}>
-                <div className="form-add-machine mb-20">
+            <DialogBody divider className="flex justify-center h-[80vh] overflow-y-scroll">
+              <form className="mt-8 mb-20 w-[100%] xl:mx-20" onSubmit={handleSubmit}>
+                <div className="form-add-machine mb-10 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-2">
                   <div>
                     <Input
                       label="ไอดีเครื่องจักร (เลือกโดยระบบ)"
@@ -197,7 +197,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
                   />
                 </div>
                 <>
-                  <Typography className="flex justify-end mb-2 gap-5">
+                  <Typography className="flex justify-start mb-2 gap-5">
                     <Button color="blue" className="py-2" type="submit">
                       <span><i className="fa-regular fa-floppy-disk fa-2x" /></span>
                       <span>บันทึก</span>
@@ -208,6 +208,10 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     </Button>
                   </Typography>
                 </>
+                <br />
+                <br />
+                <br />
+                <br />
               </form>
             </DialogBody>
           )}

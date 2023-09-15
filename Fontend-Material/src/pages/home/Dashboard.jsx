@@ -12,7 +12,8 @@ import {
 
 import { API_URL } from "@/configs";
 import { useGetData } from '@/data'
-import { alert_failed, alert_delete } from "@/widgets/alert";
+import { Loading } from "@/widgets/layout";
+import { alert_failed } from "@/widgets/alert";
 
 const dateFormat = {
   day: '2-digit',
@@ -52,7 +53,7 @@ export function Dashboard() {
   return (
     <>
       {isLoading ? (
-        <h1>Loading...</h1>
+        <Loading />
       ) : (
         <>
           <div className="mt-12 main-detail">

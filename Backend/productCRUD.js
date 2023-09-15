@@ -1,6 +1,7 @@
 //********************* API CRUD PRODUCTION *********************//
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const { convertToDateTimeLocal } = require("./config/convertDateTime");
 
 const { dbConnect } = require("./config/connection");
 const db = dbConnect();

@@ -12,7 +12,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-import { FormProduct } from "@/widgets/layout";
+import { FormProduct, Loading } from "@/widgets/layout";
 import { useGetData, useDeleteData } from '@/data'
 import { API_URL } from "@/configs";
 
@@ -72,7 +72,7 @@ export function ProductList() {
   return (
     <>
       {isLoading ? (
-        <h1>Loading...</h1>
+        <Loading />
       ) : (
         <>
           <div className="mt-12">

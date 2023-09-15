@@ -9,7 +9,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-import { FormMachine } from "@/widgets/layout";
+import { FormMachine, Loading } from "@/widgets/layout";
 import { useGetData, useDeleteData } from '@/data'
 import { API_URL } from "@/configs";
 
@@ -68,7 +68,7 @@ export function MachineLists() {
   return (
     <>
       {isLoading ? (
-        <h1>Loading...</h1>
+        <Loading />
       ) : (
         <>
           <div className="mt-12 mb-8 flex flex-col gap-12">

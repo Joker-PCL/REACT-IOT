@@ -1,12 +1,18 @@
 //********************* API CRUD MACHINE *********************//
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
+
 
 const { dbConnect } = require("./config/connection");
 const db = dbConnect();
 
 // create machine list
 router.post("/create", function (req, res) {
+    if(req.body.machineID.length !== 6) {
+        return res.status(404).json("กรอกไอดีเครื่องจักร 6 หลัก!")
+    }
+    
     db.query(`SELECT * FROM machinelist WHERE machineID = ? LIMIT 1`,
         [req.body.machineID],
         function (err, results) {
@@ -57,7 +63,7 @@ router.post("/create", function (req, res) {
                 }
                 );
             } else {
-                res.status(404).json("Invalid machineID or machineName!")
+                return res.status(404).json("ไอดีเครื่องจักรนี้มีอยู่แล้ว!")
             }
         }
     );

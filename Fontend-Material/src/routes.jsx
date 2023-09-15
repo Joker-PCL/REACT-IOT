@@ -6,7 +6,7 @@ import {
   UserPlusIcon
 } from "@heroicons/react/24/solid";
 
-import { Dashboard, ProductList, MachineLists, OEEa, OEEb, Notifications } from "@/pages/home";
+import { Dashboard, ProductList, MachineLists, OEE, Notifications } from "@/pages/home";
 import { SignIn, SignUp } from "@/pages/auth";
 
 const icon = {
@@ -38,15 +38,9 @@ export const routes = [
       },
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "OEEa",
-        path: "/OEEa",
-        element: <OEEa />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "OEEb",
-        path: "/OEEb",
-        element: <OEEb />,
+        name: "OEE",
+        path: "/OEE",
+        element: <OEE />,
       },
       // {
       //   icon: <BellIcon {...icon} />,

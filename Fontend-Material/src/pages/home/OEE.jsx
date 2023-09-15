@@ -3,8 +3,9 @@ import { TblOEE } from '@/data';
 
 import { useGetData } from '@/data'
 import { API_URL } from "@/configs";
+import { Loading } from "@/widgets/layout";
 
-export function OEEa() {
+export function OEE() {
     const [dataObj, setDataObj] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -26,7 +27,7 @@ export function OEEa() {
     return (
         <>
             {isLoading ? (
-                <h1>Loading...</h1>
+                <Loading />
             ) : (
                 <>
                     <TblOEE data={dataObj} />
@@ -36,4 +37,4 @@ export function OEEa() {
     );
 }
 
-export default OEEa
+export default OEE

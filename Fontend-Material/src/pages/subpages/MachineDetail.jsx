@@ -1,45 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Typography,
   Card,
   CardHeader,
   CardBody,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
-  Tooltip,
-  Progress,
+  Avatar
 } from "@material-tailwind/react";
 
-import {
-  ChartPieIcon,
-  ListBulletIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/solid";
-
-import {
-  ClockIcon,
-  CheckIcon,
-  EllipsisVerticalIcon,
-  ArrowUpIcon,
-} from "@heroicons/react/24/outline";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 import { StatisticsCard } from "@/widgets/cards";
 import { StatisticsChart } from "@/widgets/charts";
-import {
-  statisticsCardsData,
-  statisticsChartsData,
-  projectsTableData,
-  ordersOverviewData,
-} from "@/data";
+import { statisticsCardsData, statisticsChartsData } from "@/data";
 
-import { useGetData, usePostData } from '@/data'
+import { usePostData } from '@/data'
 import { API_URL } from "@/configs";
-import { alert_success, alert_failed, alert_delete } from "@/widgets/alert";
+import { alert_failed } from "@/widgets/alert";
+import { Loading } from "@/widgets/layout";
 import { NavMini } from "@/layouts";
 import { dateFormat } from "@/configs";
 
@@ -68,7 +46,7 @@ export function MachineDetail() {
       <NavMini />
       <>
         {isLoading ? (
-          <h1>Loading...</h1>
+          <Loading />
         ) : (
           <>
             <div className="mt-12">
@@ -199,7 +177,8 @@ export function MachineDetail() {
                                   </Typography>
                                 </td>
                               </tr>
-                            )}
+                            )
+                          }
                           )}
                         </tbody>
                       </table>

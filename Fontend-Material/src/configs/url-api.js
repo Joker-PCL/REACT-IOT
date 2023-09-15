@@ -1,19 +1,18 @@
-const host = "http://192.168.10.7:3000";
+const host = import.meta.env.VITE_HOSTNAME;
 export const API_URL = {
     CONTENT_TYPE: { 'Content-Type': 'application/json' },
-    URL_MACHINE: `${host}/api/dataListsMC`,
-    URL_SETTING: `${host}/api/dashboard`,
-    URL_DASHBOARD: `${host}/api/dashboard`,
-    URL_PRODUCT: `${host}/api/productLists`,
-    URL_DETAIL: `${host}/api/machineDetail`,
-    URL_OEE: `${host}/api/oee`,
-    URL_CREATE_PD: `${host}/api/createPD`,
-    URL_DELETE_PD: `${host}/api/deletePD`,
-    URL_UPDATE_PD: `${host}/api/updatePD`,
-    URL_CREATE_MC: `${host}/api/createMC`,
-    URL_DELETE_MC: `${host}/api/deleteMC`,
-    URL_UPDATE_MC: `${host}/api/updateMC`,
-    // URL_AEMACHINE: 
+    URL_MACHINE: `${host}/dashboard/dataListsMC`,
+    URL_SETTING: `${host}/dashboard`,
+    URL_DASHBOARD: `${host}/dashboard`,
+    URL_DETAIL: `${host}/dashboard/machineDetail`,
+    URL_OEE: `${host}/oee`,
+    URL_PRODUCT: `${host}/productCRUD`,
+    URL_CREATE_PD: `${host}/productCRUD/create`,
+    URL_DELETE_PD: `${host}/productCRUD/delete`,
+    URL_UPDATE_PD: `${host}/productCRUD/update`,
+    URL_CREATE_MC: `${host}/machineCRUD/create`,
+    URL_DELETE_MC: `${host}/machineCRUD/delete`,
+    URL_UPDATE_MC: `${host}/machineCRUD/update`,
 }
 
 export default API_URL;

@@ -36,7 +36,7 @@ router.post("/create", function (req, res) {
                     } else if (results) {
                         const tableMC = `machineid_${req.body.machineID}`
                         db.execute(`CREATE TABLE ${tableMC} (
-                  timestamp TIMESTAMP NOT NULL,
+                  timestamp DATETIME NOT NULL,
                   machineID INT(10) NOT NULL,
                   Status VARCHAR(10) NOT NULL,
                   qty INT(10) NOT NULL DEFAULT '0',
@@ -46,7 +46,7 @@ router.post("/create", function (req, res) {
                   nc4 INT(5) NOT NULL DEFAULT '0',
                   nc5 INT(5) NOT NULL DEFAULT '0',
                   nc6 INT(5) NOT NULL DEFAULT '0',
-                  UNIQUE KEY unique_timestamp (timestamp)
+                  PRIMARY KEY unique_timestamp (timestamp)
                   ) ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_general_ci COMMENT = 'ตารางเก็บข้อมูล'`,
                             function (err, results) {
                                 if (err) {
@@ -95,16 +95,28 @@ router.delete("/delete", function (req, res) {
 
 // update
 router.put("/update", function (req, res) {
-    db.execute(`UPDATE machinelist 
-                        SET machineName =?,
-                            speedDF = ?,
-                            unit = ?,
-                            RejectType =?,
-                            Alert =?,
-                            AlertTime =?,
-                            LineToken =?,
-                            Alert =?                       
-                        WHERE machineID = ?;`,
+    db.execute(`UPDATE machinelist AS MC JOIN workshift AS WS ON MC.machineID = WS.machineID
+                        SET MC.machineName =?,
+                            MC.speedDF =?,
+                            MC.unit =?,
+                            MC.RejectType =?,
+                            MC.Alert =?,
+                            MC.AlertTime =?,
+                            MC.LineToken =?,
+                            MC.Alert =?,
+                            WS.sWork1 =?,
+                            WS.eWork1 =?,
+                            WS.pt1 =?,
+                            WS.sWork2 =?,
+                            WS.eWork2 =?,
+                            WS.pt2 =?,
+                            WS.sWork3 =?,
+                            WS.eWork3 =?,
+                            WS.pt3 =?,
+                            WS.sWork4 =?,
+                            WS.eWork4 =?,
+                            WS.pt4 =?
+                        WHERE MC.machineID = ?;`,
         [
             req.body.machineName,
             req.body.speedDF,
@@ -114,6 +126,18 @@ router.put("/update", function (req, res) {
             req.body.AlertTime,
             req.body.LineToken,
             req.body.Alert,
+            req.body.sWork1,
+            req.body.eWork1,
+            req.body.pt1,
+            req.body.sWork2,
+            req.body.eWork2,
+            req.body.pt2,
+            req.body.sWork3,
+            req.body.eWork3,
+            req.body.pt3,
+            req.body.sWork4,
+            req.body.eWork4,
+            req.body.pt4,
             req.body.machineID
         ],
         function (err, results) {

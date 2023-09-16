@@ -22,6 +22,21 @@ app.use('/oee', oee);
 app.use('/api', device);
 
 //********************* INTERVAL FUNCTION CHECK DATA *********************//
+function updateStatus(status, {timeDifference, latest_timestamp}) {
+  db.execute(`UPDATE machineid_${table}
+                        SET Status =?                      
+                        WHERE timestamp BETWEEN  ? AND ?;`,
+    [status, timeDifference, latest_timestamp],
+    function (err, results) {
+      if (err) {
+        console.error("Error fetching data:", err);
+        return res.status(500).json({ error: "Error fetching data" });
+      } else {
+        res.status(200).json(results);
+      }
+    })
+}
+
 // ตรวจสอบข้อมูลทุกๆ 1 นาที
 function checkDeviceStatus() {
   try {
@@ -70,6 +85,7 @@ function checkDeviceStatus() {
                 }   // ตรวจสอบการเชื่อมต่อของอุปกรณ์ START
                 else if (Number(resData.machine_running) > 0 && list.StartAL === "OFF") {
                   console.log("Machine is running...")
+                  updateStatus('START', resData);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'START',
                                         OnlinetAL = 'ON',
@@ -89,6 +105,7 @@ function checkDeviceStatus() {
                 }  // ตรวจสอบการเชื่อมต่อของอุปกรณ์ OFFLINE (ขาดการเชื่อมต่อเกิน 15 นาที)
                 else if (resData.timeDifference >= Number(list.AlertTime) && list.DisAL === "OFF") {
                   console.log(`ข้อมูลล่าสุดเกิน ${list.AlertTime} นาที:`, resData);
+                  updateStatus('OFFLINE', resData);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'OFFLINE',
                                         OnlinetAL = 'OFF',
@@ -108,6 +125,7 @@ function checkDeviceStatus() {
                 }  // ตรวจสอบการส่งข้อมูล (ไม่มีข้อมูลส่งมาใน 5 นาที) เครื่องจักหยุดการทำงาน
                 else if (resData.sum_qty == 0 && list.StopAL === "OFF") {
                   console.log("Machine is stopped working...");
+                  updateStatus('STOP', resData);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'STOP',
                                         OnlinetAL = 'ON',

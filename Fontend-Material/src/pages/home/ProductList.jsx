@@ -5,14 +5,12 @@ import {
   CardHeader,
   CardBody,
   Menu,
-  MenuHandler,
   Avatar,
-  Tooltip,
-  Progress,
   Button,
 } from "@material-tailwind/react";
 
-import { FormProduct, Loading } from "@/widgets/layout";
+import { FormProduct } from "@/widgets/form";
+import { Loading } from "@/widgets/layout";
 import { useGetData, useDeleteData } from '@/data'
 import { API_URL } from "@/configs";
 

@@ -9,7 +9,8 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-import { FormMachine, Loading } from "@/widgets/layout";
+import { Loading } from "@/widgets/layout";
+import { FormMachine } from "@/widgets/form";
 import { useGetData, useDeleteData } from '@/data'
 import { API_URL } from "@/configs";
 
@@ -26,6 +27,7 @@ export function MachineLists() {
     await useGetData(API_URL.URL_MACHINE).then(res => {
       setMachineLists(res);
       setIsLoading(false);
+      console.log(res);
     }).catch((error) => {
       console.error("Error fetching dataMC:", error);
       alert_failed();

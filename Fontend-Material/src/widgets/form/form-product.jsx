@@ -15,6 +15,8 @@ import { API_URL } from "@/configs";
 import { useGetData, usePostData, usePutData } from '@/data'
 import { alert_success, alert_failed } from "@/widgets/alert";
 
+import MCDatepicker from "mc-datepicker";
+
 export function FormProduct({ open, setOpen, dataObj }) {
   const modalOpen = () => setOpen(!open);
   const [formData, setFormData] = useState({});
@@ -96,9 +98,9 @@ export function FormProduct({ open, setOpen, dataObj }) {
           {isLoading ? (
             <h1>Loading...</h1>
           ) : (
-            <DialogBody divider className="flex justify-center h-[80vh] overflow-y-scroll">
-              <form className="mt-8 mb-20 w-[100%] xl:mx-20" onSubmit={handleSubmit}>
-                <div className="form-add-machine mb-10 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-2">
+            <DialogBody divider className="h-[80vh] overflow-y-scroll">
+              <form className="mt-8 mb-20 w-[100%] md:px-20 xl:px-20" onSubmit={handleSubmit}>
+                <div className="mb-10 grid gap-y-8 gap-x-8 md:grid-cols-1 xl:grid-cols-2">
                   <div>
                     <Input
                       label="ไอดีเครื่องจักร (เลือกโดยระบบ)"
@@ -140,7 +142,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     }
                   </Select>
                   <Input
-                    label="เลขที่ผลิต"
+                    label="เลขที่ผลิต *"
                     id="Lot"
                     name="Lot"
                     defaultValue={formData.Lot}
@@ -149,44 +151,67 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     required
                   />
                   <Input
-                    label="รายการผลิต"
+                    label="รายการผลิต *"
                     id="product"
                     name="product"
                     defaultValue={formData.product}
                     type="text"
                     onChange={handleChange}
+                    required
                   />
                   <Input
-                    label="ตัวคูณชิ้นงาน"
-                    id="multiplier"
-                    name="multiplier"
-                    defaultValue={dataObj.multiplier || 1}
+                    label="เวลาทำงานต่อวัน *"
+                    id="workTime"
+                    name="workTime"
+                    defaultValue={formData.workTime || ""}
                     type="number"
                     onChange={handleChange}
+                    required
                   />
                   <Input
-                    label="ขนาดผลิต"
+                    label="ความเร็วเครื่องจักร *"
+                    id="setSpeed"
+                    name="setSpeed"
+                    defaultValue={formData.setSpeed || ""}
+                    type="number"
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    label="ตัวคูณชิ้นงาน *"
+                    id="multiplier"
+                    name="multiplier"
+                    defaultValue={formData.multiplier || 1}
+                    type="number"
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    label="ขนาดผลิต *"
                     id="batchSize"
                     name="batchSize"
                     defaultValue={formData.batchSize}
                     type="number"
                     onChange={handleChange}
+                    required
                   />
                   <Input
-                    label="วันที่เริ่มผลิต"
+                    label="วันที่เริ่มผลิต *"
                     id="start_production"
                     name="start_production"
                     defaultValue={formData.start_production ? convertToDateTimeLocal(formData.start_production) : ''}
                     type="datetime-local"
                     onChange={handleChange}
+                    required
                   />
                   <Input
-                    label="วันที่จบการผลิต"
+                    label="วันที่จบการผลิต *"
                     id="end_production"
                     name="end_production"
                     defaultValue={formData.end_production ? convertToDateTimeLocal(formData.end_production) : ''}
                     type="datetime-local"
                     onChange={handleChange}
+                    required
                   />
                   <Textarea
                     label="รายละเอียดเพิ่มเติม"
@@ -195,9 +220,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     defaultValue={formData.note}
                     onChange={handleChange}
                   />
-                </div>
-                <>
-                  <Typography className="flex justify-start mb-2 gap-5">
+                  <Typography className="flex justify-start mb-2 gap-5 xl:col-span-2">
                     <Button color="blue" className="py-2" type="submit">
                       <span><i className="fa-regular fa-floppy-disk fa-2x" /></span>
                       <span>บันทึก</span>
@@ -207,9 +230,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
                       <span>Cancel</span>
                     </Button>
                   </Typography>
-                </>
-                <br />
-                <br />
+                </div>
                 <br />
                 <br />
               </form>

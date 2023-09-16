@@ -200,8 +200,11 @@ router.post("/detail", function (req, res) {
 
 // query machine lists
 router.get("/dataListsMC", function (req, res) {
-    db.query(
-        "SELECT * FROM machinelist ORDER BY machineID ASC",
+    db.query(`SELECT MClist.*, WS.*
+            FROM machinelist AS MClist
+            JOIN workshift AS WS
+                ON MClist.machineID = WS.machineID
+            ORDER BY MClist.machineID ASC`,
         function (err, mcLists) {
             if (err) {
                 console.error("Error fetching data:", err);

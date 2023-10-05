@@ -7,9 +7,11 @@ import {
   Menu,
   Avatar,
   Button,
+  IconButton
 } from "@material-tailwind/react";
 
 import { FormProduct } from "@/widgets/form";
+import { WorkShift } from "../subpages";
 import { Loading } from "@/widgets/layout";
 import { useGetData, useDeleteData } from '@/data'
 import { API_URL } from "@/configs";
@@ -21,7 +23,8 @@ export function ProductList() {
   const [processList, setProductList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [formEditOpen, setFormEditOpen] = useState(false);
+  const [modalWorkShiftOpen, setModalWorkShiftOpen] = useState(false);
   const [dataObj, setDataObj] = useState([]);
 
   async function getData() {
@@ -35,13 +38,17 @@ export function ProductList() {
   };
 
   useEffect(() => {
-    if (!modalOpen) {
+    if (!formEditOpen) {
       getData();
     }
-  }, [modalOpen]);
+  }, [formEditOpen]);
 
-  const handleDialogOpen = () => {
-    setModalOpen(true);
+  const handleDialogEditOpen = () => {
+    setFormEditOpen(true);
+  };
+
+  const handleDialogWorkShiftOpen = () => {
+    setModalWorkShiftOpen(true);
   };
 
   const handleDataObj = (data = "") => {
@@ -49,13 +56,13 @@ export function ProductList() {
   }
 
   // ลบรายการผลิต
-  const dropProduct = (el) => {
+  const deleteProduct = (el) => {
     alert_delete(`${el.product} Lot.${el.Lot}`).then((result) => {
       if (result.isConfirmed) {
         (async () => {
           try {
-            const id = el.id;
-            const res = await useDeleteData(API_URL.URL_DELETE_PD, { id });
+            const productID = el.productID;
+            const res = await useDeleteData(API_URL.URL_DELETE_PD, { productID });
             getData();
             alert_success();
           } catch (error) {
@@ -91,7 +98,7 @@ export function ProductList() {
                     <Button
                       className="py-2"
                       onClick={() => {
-                        handleDialogOpen();
+                        handleDialogEditOpen();
                         handleDataObj();
                       }}
                     >
@@ -104,7 +111,7 @@ export function ProductList() {
                   <table className="w-full min-w-max table-auto text-left" id="productList">
                     <thead>
                       <tr>
-                        {["เครื่องจักร", "เลขที่ผลิต", "รายการผลิต", "ขนาดผลิต", "วันที่เริ่มผลิต", "วันที่จบการผลิต", "แก้ไข", "ลบ"].map(
+                        {["เครื่องจักร", "รายการผลิต", "ขนาดผลิต", "ความเร็ว", "ตัวคูณ", "วันที่เริ่มผลิต", "วันที่จบการผลิต", "ช่วงเวลาการทำงาน", "แก้ไข", "ลบ"].map(
                           (el) => (
                             <th
                               key={el}
@@ -129,7 +136,7 @@ export function ProductList() {
                           }`;
 
                         return (
-                          <tr key={el.id}>
+                          <tr key={el.productID}>
                             <td className={className}>
                               <div className="flex items-center gap-4">
                                 <Avatar src={'../drugs.png'} alt={'../drugs.png'} size="sm" />
@@ -142,18 +149,10 @@ export function ProductList() {
                                     {el.machineName}
                                   </Typography>
                                   <Typography className="text-xs font-normal text-blue-gray-500">
-                                    ID {el.machineID}
+                                    Lot. {el.Lot}
                                   </Typography>
                                 </div>
                               </div>
-                            </td>
-                            <td className={className}>
-                              <Typography
-                                variant="small"
-                                className="text-xs font-medium text-blue-gray-600"
-                              >
-                                {el.Lot}
-                              </Typography>
                             </td>
                             <td className={className}>
                               <Typography
@@ -176,6 +175,22 @@ export function ProductList() {
                                 variant="small"
                                 className="text-xs font-medium text-blue-gray-600"
                               >
+                                {el.setSpeed}
+                              </Typography>
+                            </td>
+                            <td className={className}>
+                              <Typography
+                                variant="small"
+                                className="text-xs font-medium text-blue-gray-600"
+                              >
+                                {el.multiplier}
+                              </Typography>
+                            </td>
+                            <td className={className}>
+                              <Typography
+                                variant="small"
+                                className="text-xs font-medium text-blue-gray-600"
+                              >
                                 {new Date(el.start_production).toLocaleString('en-GB', dateFormat)}
                               </Typography>
                             </td>
@@ -188,44 +203,38 @@ export function ProductList() {
                               </Typography>
                             </td>
                             <td className={className}>
-                              <Typography
-                                as="a"
-                                href="#"
-                                className="text-sm underline font-bold text-yellow-600"
+                              <Button
+                                color="green"
+                                className="py-2 px-1 w-[100px] justify-center"
                                 onClick={() => {
                                   handleDataObj(el);
-                                  handleDialogOpen();
+                                  handleDialogWorkShiftOpen();
+                                }}
+                              >
+                                work shift
+                              </Button>
+                            </td>
+                            <td className={className}>
+                              <Button
+                                color="amber"
+                                className="py-2 px-1 w-[75px] justify-center text-white"
+                                onClick={() => {
+                                  handleDataObj(el);
+                                  handleDialogEditOpen();
                                 }}
                               >
                                 Edit
-                              </Typography>
+                              </Button>
                             </td>
                             <td className={className}>
-                              <Typography
-                                as="a"
-                                href="#"
-                                className="text-sm underline font-bold text-red-600"
-                                onClick={() => dropProduct(el)}
+                              <Button
+                                color="red"
+                                className="py-2 px-1 w-[75px] justify-center"
+                                onClick={() => deleteProduct(el)}
                               >
                                 Delete
-                              </Typography>
+                              </Button>
                             </td>
-                            {/* <td className={className}>
-                        <div className="w-10/12">
-                          <Typography
-                            variant="small"
-                            className="mb-1 block text-xs font-medium text-blue-gray-600"
-                          >
-                            {100}%
-                          </Typography>
-                          <Progress
-                            value={100}
-                            variant="gradient"
-                            color={100 === 100 ? "green" : "blue"}
-                            className="h-1"
-                          />
-                        </div>
-                      </td> */}
                           </tr>
                         );
                       }
@@ -234,7 +243,8 @@ export function ProductList() {
                   </table>
                 </CardBody>
               </Card>
-              <FormProduct open={modalOpen} setOpen={setModalOpen} dataObj={dataObj} />
+              <FormProduct open={formEditOpen} setOpen={setFormEditOpen} dataObj={dataObj} />
+              <WorkShift open={modalWorkShiftOpen} setOpen={setModalWorkShiftOpen} dataObj={dataObj} />
             </div>
           </div>
         </>

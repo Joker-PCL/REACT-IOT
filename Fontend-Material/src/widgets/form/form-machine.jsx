@@ -90,6 +90,7 @@ export function FormMachine({ open, setOpen, dataObj }) {
     eTime.setMinutes(eMinutes);
 
     const timeDifference = (eTime < sTime ? eTime.setDate(eTime.getDate() + 1) : eTime) - sTime;
+    // const timeDifference = (eTime - sTime);
     const hours = Math.floor(timeDifference / (1000 * 60 * 60));
     const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
     const timeDifFormat = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
@@ -133,26 +134,6 @@ export function FormMachine({ open, setOpen, dataObj }) {
                   name="machineName"
                   defaultValue={formData.machineName}
                   type="text"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="work-time grid gap-y-10 gap-x-6 md:grid-cols-2 xl:col-span-2">
-                <Input
-                  label="ชั่วโมงการทำงาน *"
-                  id="workTimeDF"
-                  name="workTimeDF"
-                  defaultValue={formData.workTimeDF}
-                  type="number"
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  label="ความเร็วเครื่องโดยเฉลี่ย *"
-                  id="speedDF"
-                  name="speedDF"
-                  defaultValue={formData.speedDF}
-                  type="number"
                   onChange={handleChange}
                   required
                 />
@@ -209,7 +190,6 @@ export function FormMachine({ open, setOpen, dataObj }) {
                 />
               </div>
               <Switch
-                className="xl:col-span-2"
                 id="Alert"
                 name="Alert"
                 label="เปิดแจ้งเตือนผ่านไลน์กลุ่มตามเวลาที่กำหนด"
@@ -220,7 +200,7 @@ export function FormMachine({ open, setOpen, dataObj }) {
                     Alert: e.target.checked ? "ON" : "OFF",
                   }));
                 }}
-                className="h-full w-full checked:bg-[#2ec946]"
+                className="xl:col-span-2 h-full w-full checked:bg-[#2ec946]"
                 containerProps={{
                   className: "w-11 h-6",
                 }}
@@ -229,143 +209,6 @@ export function FormMachine({ open, setOpen, dataObj }) {
                 }}
                 ripple={true}
               />
-
-              <div className="flex justify-center xl:col-span-2 text-[24px] font-bold underline">ช่วงเวลาการทำงาน(กะเช้า)</div>
-              <div className="work-time grid gap-y-10 gap-x-6 md:grid-cols-3 xl:col-span-2 xl:grid-cols-3 xl:col-span-2">
-                <Input
-                  label="กะเช้าเริ่มเวลา *"
-                  id="sWork1"
-                  name="sWork1"
-                  className="sWork"
-                  defaultValue={formData.sWork1}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="สิ้นสุดกะเช้าเวลา *"
-                  id="eWork1"
-                  name="eWork1"
-                  className="eWork"
-                  defaultValue={formData.eWork1}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="รวมเวลากะเช้า"
-                  id="pt1"
-                  name="pt1"
-                  className="pt"
-                  defaultValue={formData.pt1}
-                  type="time"
-                  onChange={handleChange}
-                  success
-                  readOnly
-                />
-              </div>
-              <div className="work-time grid gap-y-10 gap-x-6 md:grid-cols-3 xl:col-span-2 xl:grid-cols-3 xl:col-span-2">
-                <Input
-                  label="กะบ่ายเริ่มเวลา *"
-                  id="sWork2"
-                  name="sWork2"
-                  className="sWork"
-                  defaultValue={formData.sWork2}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="สิ้นสุดกะบ่ายเวลา *"
-                  id="eWork2"
-                  name="eWork2"
-                  className="eWork"
-                  defaultValue={formData.eWork2}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="รวมเวลากะบ่าย"
-                  id="pt2"
-                  name="pt2"
-                  className="pt"
-                  defaultValue={formData.pt2}
-                  type="time"
-                  onChange={handleChange}
-                  success
-                  readOnly
-                />
-              </div>
-
-              <div className="flex justify-center xl:col-span-2 text-[24px] font-bold underline">ช่วงเวลาการทำงาน(กะกลางคืน)</div>
-              <div className="work-time grid gap-y-10 gap-x-6 md:grid-cols-3 xl:col-span-2 xl:grid-cols-3 xl:col-span-2">
-                <Input
-                  label="กะกลางคืนเริ่ม *"
-                  id="sWork3"
-                  name="sWork3"
-                  className="sWork"
-                  defaultValue={formData.sWork3}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="สิ้นสุดกะกลางคืน *"
-                  id="eWork3"
-                  name="eWork3"
-                  className="eWork"
-                  defaultValue={formData.eWork3}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="รวมเวลากะกลางคืน"
-                  id="pt3"
-                  name="pt3"
-                  className="pt"
-                  defaultValue={formData.pt3}
-                  type="time"
-                  onChange={handleChange}
-                  success
-                  readOnly
-                />
-              </div>
-              <div className="work-time grid gap-y-10 gap-x-6 md:grid-cols-3 xl:col-span-2 xl:grid-cols-3 xl:col-span-2">
-                <Input
-                  label="กะกลางคืนเริ่มเวลา(หลังพัก) *"
-                  id="sWork4"
-                  name="sWork4"
-                  className="sWork"
-                  defaultValue={formData.sWork4}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="สิ้นสุดกะกลางคืน(หลังพัก) *"
-                  id="eWork4"
-                  name="eWork4"
-                  className="eWork"
-                  defaultValue={formData.eWork4}
-                  type="time"
-                  onChange={(e) => { handleChange(e); handleSumTime(e); }}
-                  required
-                />
-                <Input
-                  label="รวมเวลากะกลางคืน(หลังพัก)"
-                  id="pt4"
-                  name="pt4"
-                  className="pt"
-                  defaultValue={formData.pt4}
-                  type="time"
-                  onChange={handleChange}
-                  success
-                  readOnly
-                />
-              </div>
-              <>
                 <Typography className="flex justify-start mb-2 gap-5 xl:col-span-2">
                   <Button color="blue" className="py-2" type="submit">
                     <span><i className="fa-regular fa-floppy-disk fa-2x" /></span>
@@ -376,7 +219,6 @@ export function FormMachine({ open, setOpen, dataObj }) {
                     <span>Cancel</span>
                   </Button>
                 </Typography>
-              </>
             </div>
             <br />
             <br />
@@ -387,6 +229,6 @@ export function FormMachine({ open, setOpen, dataObj }) {
   );
 }
 
-FormMachine.displayName = "/src/widgets/layout/form-machine.jsx";
+FormMachine.displayName = "/src/widgets/form/form-machine.jsx";
 
 export default FormMachine;

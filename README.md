@@ -34,7 +34,7 @@
 
 # UPLOAD FILE TO SERVER
     - send file
-        * scp D:/Project_Verified/Github/SQL/REACT-IOT/README.md engineer@192.168.10.7:/home/engineer
+        *  scp D:\Project_Verified\Github\IOT_OEE\REACT-IOT\Backend\server.js engineer@192.168.10.7:~/iot-polipharm
     - send folder
         * scp -r D:/Project_Verified/Github/SQL/REACT-IOT/README.md engineer@192.168.10.7:/home/engineer
         * scp -r D:\Project_Verified\Github\IOT_OEE\REACT-IOT\Fontend-Material\dist/* engineer@192.168.10.7:/var/www/html

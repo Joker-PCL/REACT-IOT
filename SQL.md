@@ -26,3 +26,22 @@ WHERE WS.machineID = 175001
 ORDER BY WS.id ASC
 
 INSERT INTO `workshift` (`machineID`, `sWork1`, `eWork1`, `sWork2`, `eWork2`, `sWork3`, `eWork3`, `sWork4`, `eWork4`) VALUES ('175001', '06:00:00', '11:30:00', '12:30:00', '17:00:00', '17:00:00', '21:00:00', '22:00:00', '06:00:00');
+
+
+CONST sw_day_1 = "06:00:00"
+CONST ew_day_1 = "11:30:00"
+CONST sw_night_1 = "17:00:00"
+CONST ew_night_1 = "21:00:00"
+CONST table = "machineid_175001"
+
+SELECT
+    SUM(CASE WHEN TB.timestamp BETWEEN @sw_day_1 AND @ew_day_1 THEN qty ELSE 0 END) AS qty_wDay,
+    SUM(CASE WHEN TB.timestamp BETWEEN @sw_night_1 AND @ew_night_1 THEN qty ELSE 0 END) AS qty_wNight
+FROM workshift AS WS
+LEFT JOIN ${table} AS TB ON TB.machineID = WS.machineID
+LEFT JOIN dayshift AS DS ON DS.wsID = WS.wsID
+LEFT JOIN nightshift AS NS ON NS.wsID = WS.wsID
+
+
+
+

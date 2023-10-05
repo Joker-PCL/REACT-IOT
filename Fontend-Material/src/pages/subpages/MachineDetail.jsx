@@ -194,6 +194,6 @@ export function MachineDetail() {
   );
 }
 
-MachineDetail.displayName = "/src/layout/MachineDetail.jsx";
+// MachineDetail.displayName = "/src/layout/MachineDetail.jsx";
 
 export default MachineDetail;

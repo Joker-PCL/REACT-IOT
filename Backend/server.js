@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require('jsonwebtoken');
 
 const { dbConnect } = require("./config/connection");
 const { sendLineNotify } = require("./config/sendLineNotify");
@@ -10,29 +11,54 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const JWT_SECRET_KEY = 'polipharm';
+
 const device = require('./device-api');
-const dashboard = require('./dashboard-api');
+const dashboard = require('./dashboard');
 const machineCRUD = require('./machineCRUD');
 const productCRUD = require('./productCRUD');
-const oee = require('./oee-api');
-app.use('/dashboard', dashboard);
-app.use('/machineCRUD', machineCRUD);
-app.use('/productCRUD', productCRUD);
-app.use('/oee', oee);
-app.use('/api', device);
+const workShift = require('./work-shift');
+const oee = require('./oee');
+app.use('/dashboard', verifyToken, dashboard);
+app.use('/machineCRUD', verifyToken, machineCRUD);
+app.use('/productCRUD', verifyToken, productCRUD);
+app.use('/workShift', verifyToken, workShift);
+app.use('/oee', verifyToken, oee);
+app.use('/api', verifyToken, device);
+
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization; // รับ token จาก headers
+  next();
+  // if (!token) {
+  //   return res.status(401).json({ error: 'ไม่พบ token' });
+  // }
+
+  // jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+  //   if (!err) {
+  //     const token = jwt.sign({msg: 175001}, JWT_SECRET_KEY, { expiresIn: '1h' });
+  //     return res.status(403).json(token);
+  //   }
+
+  //   req.user = decoded;
+  //   next();
+  // });
+}
 
 //********************* INTERVAL FUNCTION CHECK DATA *********************//
-function updateStatus(status, {timeDifference, latest_timestamp}) {
-  db.execute(`UPDATE machineid_${table}
-                        SET Status =?                      
-                        WHERE timestamp BETWEEN  ? AND ?;`,
-    [status, timeDifference, latest_timestamp],
+function updateStatus(table, status, alertTime) {
+  console.log("updateStatus", status)
+  db.execute(`UPDATE ${table}
+                SET Status =?                      
+                WHERE timestamp 
+                BETWEEN DATE_SUB(NOW(), INTERVAL ? MINUTE) 
+                AND NOW();`,
+    [status, alertTime],
     function (err, results) {
       if (err) {
         console.error("Error fetching data:", err);
-        return res.status(500).json({ error: "Error fetching data" });
       } else {
-        res.status(200).json(results);
+        console.log(results);
+        return;
       }
     })
 }
@@ -47,15 +73,14 @@ function checkDeviceStatus() {
         lists.forEach(list => {
           const table = `machineid_${list.machineID}`;
           db.query(`SELECT SUM(qty) AS sum_qty, 
-                                MAX(timestamp) AS latest_timestamp,
-                                TIMESTAMPDIFF(MINUTE, MAX(timestamp), NOW()) AS timeDifference,
-                                CASE WHEN MIN(qty) > 0 THEN 1 ELSE 0 END AS machine_running
-                          FROM ${table} 
-                          WHERE timestamp 
-                          BETWEEN 
-                            (SELECT DATE_SUB(MAX(timestamp), INTERVAL ${list.AlertTime} MINUTE) FROM ${table}) 
-                          AND 
-                            (SELECT MAX(timestamp) FROM ${table})`,
+                            MAX(timestamp) AS latest_timestamp,
+                            CASE WHEN qty > 0 THEN 1 ELSE 0 END AS machine_running
+                    FROM ${table} 
+                    WHERE timestamp 
+                    BETWEEN 
+                      DATE_SUB(NOW(), INTERVAL ${Number(list.AlertTime)} MINUTE) 
+                    AND 
+                      NOW();`,
             (err, results) => {
               if (err) {
                 console.error('เกิดข้อผิดพลาดในการค้นหาข้อมูล:', err);
@@ -85,7 +110,7 @@ function checkDeviceStatus() {
                 }   // ตรวจสอบการเชื่อมต่อของอุปกรณ์ START
                 else if (Number(resData.machine_running) > 0 && list.StartAL === "OFF") {
                   console.log("Machine is running...")
-                  updateStatus('START', resData);
+                  updateStatus(table, 'START', list.AlertTime, resData.latest_timestamp);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'START',
                                         OnlinetAL = 'ON',
@@ -103,9 +128,9 @@ function checkDeviceStatus() {
                     }
                   )
                 }  // ตรวจสอบการเชื่อมต่อของอุปกรณ์ OFFLINE (ขาดการเชื่อมต่อเกิน 15 นาที)
-                else if (resData.timeDifference >= Number(list.AlertTime) && list.DisAL === "OFF") {
+                else if (resData.sum_qty == null && list.DisAL === "OFF") {
                   console.log(`ข้อมูลล่าสุดเกิน ${list.AlertTime} นาที:`, resData);
-                  updateStatus('OFFLINE', resData);
+                  updateStatus(table, 'OFFLINE', list.AlertTime, resData.latest_timestamp);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'OFFLINE',
                                         OnlinetAL = 'OFF',
@@ -125,7 +150,7 @@ function checkDeviceStatus() {
                 }  // ตรวจสอบการส่งข้อมูล (ไม่มีข้อมูลส่งมาใน 5 นาที) เครื่องจักหยุดการทำงาน
                 else if (resData.sum_qty == 0 && list.StopAL === "OFF") {
                   console.log("Machine is stopped working...");
-                  updateStatus('STOP', resData);
+                  updateStatus(table, 'STOP', list.AlertTime, resData.latest_timestamp);
                   db.execute(`UPDATE machinelist
                                     SET Status = 'STOP',
                                         OnlinetAL = 'ON',
@@ -155,7 +180,6 @@ function checkDeviceStatus() {
     });
   } catch (err) {
     console.error("Error: ", err);
-    res.status(500).json(err);
   }
 }
 

@@ -7,12 +7,12 @@ const db = dbConnect();
 
 function fetchDataProduction(mcList) {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT Lot, product, multiplier,
+        db.query(`SELECT Lot, product,
                               batchSize, start_production, end_production,
                               note
                         FROM productionlist
                         WHERE machineID = ${mcList.machineID}
-                        ORDER BY id DESC
+                        ORDER BY productID DESC
                         LIMIT 1`,
             function (err, production) {
                 if (err) {
@@ -65,7 +65,12 @@ function fetchData(productList) {
 
         db.query(`SELECT ${sql_qty} as totalQty,
                               (${sql_qty}) / SUM(CASE WHEN qty > 0 THEN 1 ELSE 0 END) as avgQty,
-                              MAX(timestamp) as latest_information,
+                              (
+                                SELECT timestamp FROM machineid_${productList.machineID}
+                                WHERE Status IS NOT NULL 
+                                ORDER BY timestamp DESC 
+                                LIMIT 1
+                              ) AS latest_information,
                               CONCAT(
                                 LPAD(TIMESTAMPDIFF(HOUR, MIN(timestamp), MAX(timestamp)), 2, '0'), ' ชั่วโมง ',
                                 LPAD(TIMESTAMPDIFF(MINUTE, MIN(timestamp), MAX(timestamp)) % 60, 2, '0'), ' นาที'
@@ -128,13 +133,6 @@ function fetchData(productList) {
 // query dashboard machine
 router.get("/", function (req, res) {
     try {
-        const now = new Date();
-        const localTime = now.getTime();
-        const startOfToday = new Date(localTime);
-        startOfToday.setHours(0, 0, 0, 0);
-        const endOfToday = new Date(localTime);
-        endOfToday.setHours(23, 59, 59, 999);
-
         // ดึงข้อมูลรายการเครื่องจักร
         db.query("SELECT * FROM machinelist ORDER BY machineID",
             function (err, mcLists) {
@@ -203,7 +201,7 @@ router.get("/dataListsMC", function (req, res) {
     db.query(`SELECT MClist.*, WS.*
             FROM machinelist AS MClist
             JOIN workshift AS WS
-                ON MClist.machineID = WS.machineID
+            ON MClist.machineID = WS.machineID
             ORDER BY MClist.machineID ASC`,
         function (err, mcLists) {
             if (err) {
@@ -216,13 +214,13 @@ router.get("/dataListsMC", function (req, res) {
     );
 });
 
-// query machine lists
+// query machine detail
 router.post("/machineDetail", function (req, res) {
     db.query(`SELECT PD.*, MC.*
                       FROM productionlist as PD
                       JOIN machinelist as MC ON PD.machineID = MC.machineID
                       WHERE MC.machineID = ?
-                      ORDER BY PD.id DESC`,
+                      ORDER BY PD.productID DESC`,
         [req.body.machineID],
         function (err, lists) {
             console.log(lists);

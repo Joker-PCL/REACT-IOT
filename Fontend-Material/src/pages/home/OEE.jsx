@@ -4,6 +4,7 @@ import { TblOEE } from '@/data';
 import { useGetData } from '@/data'
 import { API_URL } from "@/configs";
 import { Loading } from "@/widgets/layout";
+import { alert_failed } from '@/widgets/alert';
 
 export function OEE() {
     const [dataObj, setDataObj] = useState(null);

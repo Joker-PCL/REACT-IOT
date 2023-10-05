@@ -13,6 +13,14 @@
     z-index: 99999 !important;
 }
 
+.tWork {
+    background-color: rgba(132, 132, 132, 0.185);
+}
+
+.swal2-container {
+    z-index: 99999!important;
+}
+
 label {
     font-size: 14px !important;
 }

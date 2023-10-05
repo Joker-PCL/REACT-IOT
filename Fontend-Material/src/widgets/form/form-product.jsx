@@ -15,6 +15,8 @@ import { API_URL } from "@/configs";
 import { useGetData, usePostData, usePutData } from '@/data'
 import { alert_success, alert_failed } from "@/widgets/alert";
 
+import { convertToDateTimeLocal } from "@/configs";
+
 import MCDatepicker from "mc-datepicker";
 
 export function FormProduct({ open, setOpen, dataObj }) {
@@ -24,7 +26,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
   const [isLoading, setIsLoading] = useState(true);
 
   async function getMachineLists() {
-    await useGetData(API_URL.URL_MACHINE).then(res => {
+    await useGetData(API_URL.URL_MACHINE_PD).then(res => {
       setMachineLists(res);
       setIsLoading(false);
     }).catch((error) => {
@@ -45,7 +47,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // แก้ไขข้อมูลเครื่องจักร
-    if (dataObj.id) {
+    if (dataObj.productID) {
       (async () => {
         await usePutData(API_URL.URL_UPDATE_PD, formData).then(() => {
           modalOpen();
@@ -77,19 +79,6 @@ export function FormProduct({ open, setOpen, dataObj }) {
     }));
   }
 
-  function convertToDateTimeLocal(isoDateTime) {
-    const date = new Date(isoDateTime);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    const dateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-    return dateTimeLocal;
-  }
-
   return (
     <>
       <Dialog open={open} size="xxl">
@@ -117,7 +106,7 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     name="machineName"
                     label="ชื่อเครื่องจักร"
                     value={formData.machineName}
-                    disabled={dataObj.machineName ? true : false}
+                    disabled={!!dataObj.machineName}
                     required
                     onChange={(value) => {
                       setFormData((prevData) => ({
@@ -160,15 +149,6 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     required
                   />
                   <Input
-                    label="เวลาทำงานต่อวัน *"
-                    id="workTime"
-                    name="workTime"
-                    defaultValue={formData.workTime || ""}
-                    type="number"
-                    onChange={handleChange}
-                    required
-                  />
-                  <Input
                     label="ความเร็วเครื่องจักร *"
                     id="setSpeed"
                     name="setSpeed"
@@ -182,15 +162,6 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     id="multiplier"
                     name="multiplier"
                     defaultValue={formData.multiplier || 1}
-                    type="number"
-                    onChange={handleChange}
-                    required
-                  />
-                  <Input
-                    label="ขนาดผลิต *"
-                    id="batchSize"
-                    name="batchSize"
-                    defaultValue={formData.batchSize}
                     type="number"
                     onChange={handleChange}
                     required
@@ -210,6 +181,15 @@ export function FormProduct({ open, setOpen, dataObj }) {
                     name="end_production"
                     defaultValue={formData.end_production ? convertToDateTimeLocal(formData.end_production) : ''}
                     type="datetime-local"
+                    onChange={handleChange}
+                    required
+                  />
+                  <Input
+                    label="ขนาดผลิต *"
+                    id="batchSize"
+                    name="batchSize"
+                    defaultValue={formData.batchSize}
+                    type="number"
                     onChange={handleChange}
                     required
                   />
@@ -242,6 +222,6 @@ export function FormProduct({ open, setOpen, dataObj }) {
   );
 }
 
-FormProduct.displayName = "/src/widgets/layout/form-product.jsx";
+FormProduct.displayName = "/src/widgets/form/form-product.jsx";
 
 export default FormProduct;

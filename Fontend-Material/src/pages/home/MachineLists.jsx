@@ -18,27 +18,10 @@ import { alert_success, alert_failed, alert_delete } from "@/widgets/alert";
 
 export function MachineLists() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [dataObj, setDataObj] = useState([]);
+  const [dataObj, setDataObj] = useState({});
 
-  const [machineLists, setMachineLists] = useState([]);
+  const [machineLists, setMachineLists] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-
-  async function getData() {
-    await useGetData(API_URL.URL_MACHINE).then(res => {
-      setMachineLists(res);
-      setIsLoading(false);
-      console.log(res);
-    }).catch((error) => {
-      console.error("Error fetching dataMC:", error);
-      alert_failed();
-    });
-  };
-
-  useEffect(() => {
-    if (!modalOpen) {
-      getData();
-    }
-  }, [modalOpen]);
 
   const handleDialogOpen = () => {
     setModalOpen(true);
@@ -48,13 +31,24 @@ export function MachineLists() {
     setDataObj(data);
   }
 
+  // ดึงข้อมูลรายการเครื่องจักร
+  async function getData() {
+    await useGetData(API_URL.URL_MC).then(res => {
+      setMachineLists(res);
+      setIsLoading(false);
+    }).catch((error) => {
+      console.error("Error fetching dataMC:", error);
+      alert_failed();
+    });
+  };
+
   // ลบเครื่องจักร
-  const dropMachine = (el) => {
+  const deleteMachine = (el) => {
     alert_delete(el.machineName).then((result) => {
       if (result.isConfirmed) {
         (async () => {
           try {
-            const machineID =  el.machineID;
+            const machineID = el.machineID;
             const res = await useDeleteData(API_URL.URL_DELETE_MC, { machineID });
             getData();
             alert_success();
@@ -66,6 +60,12 @@ export function MachineLists() {
       }
     })
   };
+
+  useEffect(() => {
+    if (!modalOpen) {
+      getData();
+    }
+  }, [modalOpen]);
 
   return (
     <>
@@ -192,7 +192,7 @@ export function MachineLists() {
                               as="a"
                               href="#"
                               className="text-sm underline font-bold text-red-600"
-                              onClick={() => dropMachine(el)}
+                              onClick={() => deleteMachine(el)}
                             >
                               Delete
                             </Typography>

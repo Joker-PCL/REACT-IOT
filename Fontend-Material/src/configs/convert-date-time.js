@@ -76,12 +76,12 @@ export const SumOfDuration = (timeArray) => {
 }
 
 // คำนวณเวลาตามแผน 05:30 * 2 return 11:00
-export const multiplyTime = (timeString, multiplier) => {
-    if (!timeString || !multiplier) return null;
+export const multiplyTime = (timeString, workDays) => {
+    if (!timeString || !workDays) return null;
 
     const [hours, minutes, seconds] = timeString.split(':').map(Number);
 
-    const totalSeconds = (hours * 3600 + minutes * 60 + seconds) * multiplier;
+    const totalSeconds = (hours * 3600 + minutes * 60 + seconds) * workDays;
 
     const newHours = Math.floor(totalSeconds / 3600);
     const remainderSeconds = totalSeconds % 3600;

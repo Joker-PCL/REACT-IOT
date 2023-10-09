@@ -14,7 +14,6 @@ export function OEE() {
         await useGetData(API_URL.URL_OEE).then(res => {
             setDataObj(res);
             setIsLoading(false);
-            console.log(res)
         }).catch((error) => {
             console.error("Error fetching dataMC:", error);
             alert_failed();

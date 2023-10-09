@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { Button, Input } from "@material-tailwind/react";
-import { dateFormat, timeDifFormat, timeToMinutes, multiplyTime } from "@/configs";
+import {
+    dateFormat, timeDifFormat, timeToMinutes, multiplyTime,
+    SumOfDuration, sumStringNumber, avgStringDecimal, avgStringPercentage
+} from "@/configs";
 
 const formatterProgress = {
     min: 0,
@@ -71,17 +74,13 @@ const columns = [
 ]
 
 const dataTable = (dataObj) => {
-    // data header format
-    const create_header = (arr) => {
-    }
-
     // data children format
     const create_children = (arr) => {
         const plannedTime = multiplyTime(arr.plannedTime, arr.work_days);
         const availability = Number(arr.online_min / timeToMinutes(plannedTime) * 100).toFixed(2);
         const performance = (Number(arr.average) / (Number(arr._setSpeed) * Number(arr._multiplier)) * 100).toFixed(2);
         const quality = (Number(arr.totalQty) / Number(arr.total) * 100).toFixed(2);
-        
+
         return {
             workshift: arr.workshift,
             sTime: arr.sTime,
@@ -102,17 +101,17 @@ const dataTable = (dataObj) => {
 
     const results = dataObj.map((d) => {
         const ws = d.workshift;
-        return {
+        const dataRow = {
             sDate: new Date(d.start_work).toLocaleString('en-GB', dateFormat).split(',')[0],
             eDate: new Date(d.end_work).toLocaleString('en-GB', dateFormat).split(',')[0],
             machineName: d.machineName,
             lotnumber: d.Lot,
             product: d.product,
             workshift: "รวมทุกกะ",
-            sTime: "06:00",
-            eTime: "02:00",
-            plannedTime: "18:00",
-            periodTime: "11:28",
+            sTime: d.sShift,
+            eTime: d.eShift,
+            plannedTime: multiplyTime(d.total_work_time, d.work_days),
+            periodTime: "timeDuration_function",
             total: "8,500",
             totalQty: "8,420",
             totalNC: "80",
@@ -209,6 +208,33 @@ const dataTable = (dataObj) => {
                 }),
             ]
         }
+
+        const firstRow = {};
+        dataRow._children.forEach(child => {
+            Object.keys(child).forEach(key => {
+                if (child[key]) {
+                    if (!firstRow[key]) {
+                        firstRow[key] = [];
+                    }
+                    firstRow[key].push(child[key]);
+                }
+            });
+        });
+
+        console.log(firstRow)
+
+        return {
+            ...dataRow,
+            periodTime: SumOfDuration(firstRow.periodTime),
+            total: sumStringNumber(firstRow.total).toLocaleString(),
+            totalQty: sumStringNumber(firstRow.totalQty).toLocaleString(),
+            totalNC: sumStringNumber(firstRow.totalNC).toLocaleString(),
+            average: avgStringDecimal(firstRow.average),
+            availability: avgStringPercentage(firstRow.availability),
+            performance: avgStringPercentage(firstRow.performance),
+            quality: avgStringPercentage(firstRow.quality),
+            OEE: avgStringPercentage(firstRow.OEE)
+        };
     });
 
     return results;

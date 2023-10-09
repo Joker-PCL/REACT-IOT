@@ -89,6 +89,19 @@ function fetchDataOEE(mcList) {
         const table = `machineid_${mcList.machineID}`;
         const sDate = mcList.start_work;
         const eDate = mcList.end_work;
+        const sShift = mcList.sw_day_1 ? mcList.sw_day_1 :
+            mcList.sw_2 ? mcList.sw_2 :
+                mcList.sw_day_ot ? mcList.sw_day_ot :
+                    mcList.sw_night_1 ? mcList.sw_night_1 :
+                        mcList.sw_night_2 ? mcList.sw_night_2 :
+                            sw_night_ot ? mcList.sw_night_ot : null;
+
+        const eShift = mcList.ew_night_ot ? mcList.ew_night_ot :
+            mcList.ew_night_2 ? mcList.ew_night_2 :
+                mcList.ew_night_1 ? mcList.ew_night_1 :
+                    mcList.ew_day_ot ? mcList.ew_day_ot :
+                        mcList.ew_day_2 ? mcList.ew_day_2 :
+                            ew_day_1 ? mcList.ew_day_1 : null;
 
         const sql = `SELECT
                         ${createSql("day_1", mcList.sw_day_1, mcList.ew_day_1)},
@@ -104,7 +117,7 @@ function fetchDataOEE(mcList) {
                 console.error("Error fetching data:", err);
                 reject(err);
             } else {
-                const result = { ...mcList, workshift: lists[0] };
+                const result = { ...mcList, sShift, eShift, workshift: lists[0] };
                 resolve(result);
             }
         })
